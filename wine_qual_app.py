@@ -7,22 +7,12 @@ from tensorflow.keras.models import load_model
 st.title("🍷 Wine Quality Prediction App")
 st.write("Εισάγετε τα φυσικοχημικά χαρακτηριστικά του κρασιού για πρόβλεψη ποιότητας (0–10).")
 
-# --- Φόρτωση αντικειμένων ---
+# Φόρτωση scaler/pca/model
 scaler = joblib.load('scaler.pkl')
 pca = joblib.load('pca.pkl')
 model = load_model('wine_nn_model.h5')
 
-# import pickle
-
-# with open('scaler.pkl', 'rb') as f:
-#     scaler = pickle.load(f)
-
-# with open('pca.pkl', 'rb') as f:
-#     pca = pickle.load(f)
-
-# model = load_model('wine_nn_model.h5')
-
-# --- Είσοδοι χρήστη ---
+# Είσοδοι από το χρήστη
 st.sidebar.header("Χαρακτηριστικά κρασιού")
 
 fixed_acidity = st.sidebar.number_input("Fixed Acidity", 0.0, 20.0, 7.0)
@@ -37,18 +27,19 @@ pH = st.sidebar.number_input("pH", 2.5, 4.5, 3.3)
 sulphates = st.sidebar.number_input("Sulphates", 0.0, 2.0, 0.6)
 alcohol = st.sidebar.number_input("Alcohol", 5.0, 15.0, 10.0)
 
-# --- Δημιουργία εισόδου ---
+# Δημιουργία της εισόδου:
 x = np.array([[fixed_acidity, volatile_acidity, citric_acid, residual_sugar,
                chlorides, free_sulfur_dioxide, total_sulfur_dioxide,
                density, pH, sulphates, alcohol]])
 
-# --- Προεπεξεργασία ---
+# Προεπεξεργασία / χρήση των pca&scaler
 x_scaled = scaler.transform(x)
 x_pca = pca.transform(x_scaled)
 
-# --- Πρόβλεψη ---
+# Τελική Πρόβλεψη
 if st.button("🔮 Πρόβλεψη Ποιότητας"):
     pred_probs = model.predict(x_pca)
     predicted_class = np.argmax(pred_probs, axis=1)[0]
     confidence = np.max(pred_probs)
     st.success(f"**Προβλεπόμενη ποιότητα:** {predicted_class}/10  \n(Εμπιστοσύνη: {confidence:.2%})")
+
