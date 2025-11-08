@@ -1,0 +1,11 @@
+# Streamlit web framework
+streamlit==1.39.0
+
+# Data manipulation and ML utilities
+numpy
+pandas
+scikit-learn
+joblib==1.4.2
+
+# Deep learning
+tensorflow
